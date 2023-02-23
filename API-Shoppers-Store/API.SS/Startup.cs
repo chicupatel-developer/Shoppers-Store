@@ -10,6 +10,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.IO;
+using System.Text;
+using Microsoft.Extensions.Configuration.Json;
+using EF.Core.ShoppersStore.Authentication;
+using EF.Core.ShoppersStore.Authentication.Models;
+using Microsoft.Extensions.FileProviders;
+
+
 
 namespace API.SS
 {
@@ -26,6 +39,71 @@ namespace API.SS
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+
+            #region authentication db context
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ShoppersStoreAuthConnection")));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+            #endregion
+
+            #region authentication
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            #endregion
+
+            #region jwt bearer
+            .AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = Configuration["JWT:ValidAudience"],
+                    ValidIssuer = Configuration["JWT:ValidIssuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+                };
+            });
+            #endregion
+
+            #region role
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin",
+                    authBuilder =>
+                    {
+                        authBuilder.RequireRole("Admin");
+                    });
+                options.AddPolicy("Manager",
+                   authBuilder =>
+                   {
+                       authBuilder.RequireRole("Manager");
+                   });
+                options.AddPolicy("Shopper",
+                 authBuilder =>
+                 {
+                     authBuilder.RequireRole("Shopper");
+                 });
+            });
+            #endregion
+
+            #region cors
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,10 +114,21 @@ namespace API.SS
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors("CorsPolicy");
+
+            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider
+              (Path.Combine(Directory.GetCurrentDirectory(), @"Files")),
+                RequestPath = new PathString("/Files")
+            });
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
