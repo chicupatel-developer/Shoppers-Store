@@ -21,6 +21,7 @@ using Microsoft.Extensions.Configuration.Json;
 using EF.Core.ShoppersStore.Authentication;
 using EF.Core.ShoppersStore.Authentication.Models;
 using Microsoft.Extensions.FileProviders;
+using EF.Core.ShoppersStore.ShoppersStoreDB;
 
 
 
@@ -40,6 +41,12 @@ namespace API.SS
         {
             services.AddControllers();
 
+            #region shoppers-store db context
+            services.AddDbContext<ShoppersStoreContext>(options =>
+                    options.UseSqlServer(
+                      Configuration.GetConnectionString("ShoppersStoreConnection"),
+                      b => b.MigrationsAssembly(typeof(ShoppersStoreContext).Assembly.FullName)));
+            #endregion
 
             #region authentication db context
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ShoppersStoreAuthConnection")));
