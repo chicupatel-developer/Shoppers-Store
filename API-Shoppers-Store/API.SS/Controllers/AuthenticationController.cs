@@ -165,12 +165,32 @@ namespace API.SS.Controllers
             try
             {
                 List<string> roles = new List<string>();
-                if (await roleManager.RoleExistsAsync(UserRoles.Admin))
+
+                if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
                     roles.Add("Admin");
-                if (await roleManager.RoleExistsAsync(UserRoles.Manager))
+                }
+                else
+                    roles.Add("Admin");
+                
+                if (!await roleManager.RoleExistsAsync(UserRoles.Manager))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(UserRoles.Manager));
                     roles.Add("Manager");
-                if (await roleManager.RoleExistsAsync(UserRoles.Shopper))
+                }
+                else
+                    roles.Add("Manager");
+                
+                if (!await roleManager.RoleExistsAsync(UserRoles.Shopper))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(UserRoles.Shopper));
                     roles.Add("Shopper");
+                }
+                else
+                    roles.Add("Shopper");
+
+
                 return Ok(roles);
             }
             catch (Exception ex)
