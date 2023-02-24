@@ -40,7 +40,7 @@ namespace API.SS.Controllers
             var response = new Response();
             try
             {
-                // throw new Exception();
+                throw new Exception();
 
                 if (ModelState.IsValid)
                 {
