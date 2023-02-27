@@ -22,7 +22,8 @@ using EF.Core.ShoppersStore.Authentication;
 using EF.Core.ShoppersStore.Authentication.Models;
 using Microsoft.Extensions.FileProviders;
 using EF.Core.ShoppersStore.ShoppersStoreDB;
-
+using ServiceLib.ShoppersStore.Interfaces;
+using ServiceLib.ShoppersStore.Repositories;
 
 
 namespace API.SS
@@ -40,6 +41,10 @@ namespace API.SS
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            #region Repositories
+            services.AddTransient<IProductRepository, ProductRepository>();
+            #endregion
 
             #region shoppers-store db context
             services.AddDbContext<ShoppersStoreContext>(options =>

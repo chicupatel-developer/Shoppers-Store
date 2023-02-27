@@ -106,7 +106,6 @@ namespace API.SS.Controllers
             }
         }
 
-
         [HttpPost]
         [Route("register/{myRole}")]
         public async Task<IActionResult> Register(RegisterModel model, string myRole)
@@ -156,7 +155,6 @@ namespace API.SS.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { ResponseCode = 500, ResponseMessage = "Server Error!" });
             }
         }
-
 
         [HttpGet]
         [Route("getRoles")]

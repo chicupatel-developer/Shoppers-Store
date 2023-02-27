@@ -8,16 +8,16 @@ namespace ServiceLib.ShoppersStore.Interfaces
 {
     public interface IProductRepository
     {
-        /*
-        Product AddProduct(Product product);
+        IEnumerable<Category> GetCategories();
+        Product AddProduct(Product product);        
         ProductFileAddResponse ProductFileAdd(ProductFile productFile);
+        /*
         IEnumerable<ProductDTO> GetAllProducts();
         ProductDTO GetProduct(int productId);
         ProductDTO EditProduct(ProductDTO product);
-        ProductFileEditResponse ProductFileEdit(ProductFileEditResponse _productFile);
-        IEnumerable<Category> GetCategories();
+        ProductFileEditResponse ProductFileEdit(ProductFileEditResponse _productFile);        
         IEnumerable<ProductDTO> SearchProducts(string searchValue, string categoryId);
         ProductDiscountDTO SetProductDiscount(ProductDiscountDTO discount);
         */
-    }   
+    }
 }
