@@ -8,6 +8,8 @@ using ServiceLib.ShoppersStore.Interfaces;
 using ServiceLib.ShoppersStore.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using EF.Core.ShoppersStore.ShoppersStoreDB.Models;
+using ServiceLib.ShoppersStore.DTO;
+using System.IO;
 
 namespace API.SS.Controllers
 {
@@ -71,6 +73,92 @@ namespace API.SS.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { ResponseCode = 500, ResponseMessage = "Server Error!" });
+            }
+        }
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [RequestSizeLimit(40000000)]
+        [Route("productFileUpload_")]
+        public IActionResult ProductFileUpload_([FromForm] AddProductFile_ addProductFile_)
+        {
+            ProductFileAddResponse response = new ProductFileAddResponse();
+            try
+            {
+                // throw new Exception();
+
+                // var postedFile = Request.Form.Files[0];
+                var postedFile = addProductFile_.ProductFile;
+
+                var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Files");
+                if (postedFile.Length > 0)
+                {
+                    var fileName = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" + postedFile.FileName;
+                    var finalPath = Path.Combine(uploadFolder, fileName);
+                    using (var fileStream = new FileStream(finalPath, FileMode.Create))
+                    {
+                        postedFile.CopyTo(fileStream);
+                    }
+                    // product file info save to db
+                    AddProductFile addProductFile = new AddProductFile()
+                    {
+                        FilePath = finalPath,
+                        FileName = fileName,
+                        ProductId = Convert.ToInt32(addProductFile_.ProductId),
+                    };
+                    response = _productRepo.ProductFileAdd(addProductFile);
+                    return Ok(response);
+                }
+                else
+                {
+                    return BadRequest("The File is not received.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Some Error Occcured while uploading File {ex.Message}");
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [RequestSizeLimit(40000000)]
+        [Route("productFileUpload")]
+        public IActionResult ProductFileUpload()
+        {
+            ProductFileAddResponse response = new ProductFileAddResponse();
+            try
+            {
+                // throw new Exception();
+
+                var postedFile = Request.Form.Files[0];
+                var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Files");
+                if (postedFile.Length > 0)
+                {
+                    var fileName = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" + postedFile.FileName;
+                    var finalPath = Path.Combine(uploadFolder, fileName);
+                    using (var fileStream = new FileStream(finalPath, FileMode.Create))
+                    {
+                        postedFile.CopyTo(fileStream);
+                    }
+                    // product file info save to db
+                    AddProductFile addProductFile = new AddProductFile()
+                    {
+                        FilePath = finalPath,
+                        FileName = fileName
+                    };
+                    response = _productRepo.ProductFileAdd(addProductFile);
+                    return Ok(response);
+                }
+                else
+                {
+                    return BadRequest("The File is not received.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Some Error Occcured while uploading File {ex.Message}");
             }
         }
     }

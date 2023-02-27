@@ -10,7 +10,7 @@ namespace ServiceLib.ShoppersStore.Interfaces
     {
         IEnumerable<Category> GetCategories();
         Product AddProduct(Product product);        
-        ProductFileAddResponse ProductFileAdd(ProductFile productFile);
+        ProductFileAddResponse ProductFileAdd(AddProductFile addProductFile);
         /*
         IEnumerable<ProductDTO> GetAllProducts();
         ProductDTO GetProduct(int productId);

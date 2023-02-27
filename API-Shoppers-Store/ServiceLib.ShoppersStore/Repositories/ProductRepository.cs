@@ -41,15 +41,41 @@ namespace ServiceLib.ShoppersStore.Repositories
         }
 
         // product image info save to db
-        public ProductFileAddResponse ProductFileAdd(ProductFile productFile)
+        public ProductFileAddResponse ProductFileAdd(AddProductFile addProductFile)
         {
             ProductFileAddResponse response = new ProductFileAddResponse();
+            using var transaction = appDbContext.Database.BeginTransaction();
             try
             {
                 // throw new Exception();
 
+                // 1)
+                ProductFile productFile = new ProductFile()
+                {
+                    ProductFileId = addProductFile.ProductFileId,
+                    FileName = addProductFile.FileName,
+                    FilePath = addProductFile.FilePath
+                };
                 var productFileSaved = appDbContext.ProductFiles.Add(productFile);
                 appDbContext.SaveChanges();
+
+                // 2)
+                var product = appDbContext.Products
+                                    .Where(x => x.ProductId == addProductFile.ProductId).FirstOrDefault();
+                if (product != null)
+                {
+                    product.ProductFileId = productFileSaved.Entity.ProductFileId;
+                    appDbContext.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception();
+                }
+
+                // commit 1 & 2
+                transaction.Commit();
+
+
                 response.ResponseCode = 0;
                 response.ResponseMessage = "Product File Saved Successfully !";
                 response.ProductFileId = productFileSaved.Entity.ProductFileId;
@@ -57,6 +83,8 @@ namespace ServiceLib.ShoppersStore.Repositories
             }
             catch (Exception ex)
             {
+                transaction.Rollback();
+
                 response.ResponseCode = -1;
                 response.ResponseMessage = "Product File Saved Fail !";
                 response.ProductFileId = 0;
