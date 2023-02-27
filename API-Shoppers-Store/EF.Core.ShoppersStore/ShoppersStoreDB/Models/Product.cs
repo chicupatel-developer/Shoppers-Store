@@ -18,6 +18,7 @@ namespace EF.Core.ShoppersStore.ShoppersStoreDB.Models
         public string ProductName { get; set; }
         public string ProductDesc { get; set; }
 
+        [Range(1, int.MaxValue, ErrorMessage = "Price is Required!")]
         [Required(ErrorMessage = "Price is Required!")]
         public decimal Price { get; set; }
         public decimal DiscountPrice { get; set; }
@@ -26,7 +27,8 @@ namespace EF.Core.ShoppersStore.ShoppersStoreDB.Models
 
         public int ProductFileId { get; set; }
 
-        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Category is Required!")]
+        [Required(ErrorMessage = "Category is Required!")]
         [ForeignKey(nameof(Category))]
         public int CategoryId { get; set; }
 

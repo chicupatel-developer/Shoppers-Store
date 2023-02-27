@@ -50,8 +50,11 @@ namespace API.SS.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    _productRepo.AddProduct(product);
-                    return Ok("Product Created Successfully !");
+                    var newProduct = _productRepo.AddProduct(product);
+                    if (newProduct!=null)
+                        return Ok(new { ResponseCode = 200, ResponseMessage = "Product Created Successfully!" ,NewProduct = newProduct });
+                    else
+                        return StatusCode(StatusCodes.Status500InternalServerError, new { ResponseCode = 500, ResponseMessage = "Server Error!" });
                 }
                 else
                 {
@@ -67,7 +70,7 @@ namespace API.SS.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return StatusCode(StatusCodes.Status500InternalServerError, new { ResponseCode = 500, ResponseMessage = "Server Error!" });
             }
         }
     }

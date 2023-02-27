@@ -28,6 +28,8 @@ namespace ServiceLib.ShoppersStore.Repositories
         {
             try
             {
+                // throw new Exception();
+
                 var result = appDbContext.Products.Add(product);
                 appDbContext.SaveChanges();
                 return result.Entity;
