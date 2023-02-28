@@ -24,6 +24,9 @@ namespace API.SS.Controllers
             _productRepo = productRepo;
         }
 
+        // check for file type
+        private string[] permittedExtensions = { ".gif", ".jpeg", ".jpg", ".png" };
+
         [Authorize(Roles = "Shopper,Admin,Manager")]
         [HttpGet]
         [Route("getCategories")]
@@ -91,6 +94,15 @@ namespace API.SS.Controllers
 
                 // var postedFile = Request.Form.Files[0];
                 var postedFile = addProductFile_.ProductFile;
+
+
+                // check for file type
+                var ext = Path.GetExtension(postedFile.FileName).ToLowerInvariant();
+                if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
+                {
+                    return BadRequest("Invalid File Type !");                   
+                }
+
 
                 var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Files");
                 if (postedFile.Length > 0)
