@@ -80,8 +80,9 @@ namespace API.SS.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [RequestSizeLimit(40000000)]
-        [Route("productFileUpload_")]
-        public IActionResult ProductFileUpload_([FromForm] AddProductFile_ addProductFile_)
+        [Route("productFileUpload")]
+        #region file upload with extra parameter,,, custom type AddProductFile_
+        public async Task<IActionResult> ProductFileUpload([FromForm] AddProductFile_ addProductFile_)
         {
             ProductFileAddResponse response = new ProductFileAddResponse();
             try
@@ -98,7 +99,7 @@ namespace API.SS.Controllers
                     var finalPath = Path.Combine(uploadFolder, fileName);
                     using (var fileStream = new FileStream(finalPath, FileMode.Create))
                     {
-                        postedFile.CopyTo(fileStream);
+                        await postedFile.CopyToAsync(fileStream);
                     }
                     // product file info save to db
                     AddProductFile addProductFile = new AddProductFile()
@@ -112,20 +113,23 @@ namespace API.SS.Controllers
                 }
                 else
                 {
-                    return BadRequest("The File is not received.");
+                    return BadRequest("The File is not received !");
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Some Error Occcured while uploading File {ex.Message}");
+                return StatusCode(500, "Server Error !");
             }
         }
+        #endregion
+
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [RequestSizeLimit(40000000)]
-        [Route("productFileUpload")]
-        public IActionResult ProductFileUpload()
+        [Route("productFileUpload_01")]
+        #region file upload without any extra parameter,,, only file parameter
+        public IActionResult ProductFileUpload_01()
         {
             ProductFileAddResponse response = new ProductFileAddResponse();
             try
@@ -161,5 +165,6 @@ namespace API.SS.Controllers
                 return StatusCode(500, $"Some Error Occcured while uploading File {ex.Message}");
             }
         }
+        #endregion
     }
 }
