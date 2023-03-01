@@ -178,5 +178,32 @@ namespace API.SS.Controllers
             }
         }
         #endregion
+
+
+        [Authorize(Roles = "Shopper,Admin,Manager")]
+        [HttpGet]
+        [Route("allProducts")]
+        public IActionResult GetAllProducts(string searchValue, string categoryId)
+        {
+            try
+            {              
+                if (searchValue == null && categoryId == null)
+                {
+                    var allProducts = _productRepo.GetAllProducts();
+                    return Ok(allProducts);
+                }
+                else
+                {
+                    var allProducts = _productRepo.SearchProducts(searchValue, categoryId);
+                    return Ok(allProducts);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { ResponseCode = 500, ResponseMessage = "Server Error!" });
+            }
+        }
+
+
     }
 }
