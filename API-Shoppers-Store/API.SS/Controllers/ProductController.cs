@@ -231,5 +231,46 @@ namespace API.SS.Controllers
             }
         }
 
+
+        [Authorize("Admin")]
+        [HttpPost]
+        [Route("editProduct/{editingProductId}")]
+        public IActionResult EditProduct(int editingProductId, ProductDTO product)
+        {
+            APIResponse response = new APIResponse();
+            try
+            {
+                // check for exception
+                // throw new Exception();
+
+                if (ModelState.IsValid)
+                {
+                    
+                    ProductDTO editedProduct = _productRepo.EditProduct(product);
+                    if (editedProduct != null)
+                    {
+                        response.ResponseCode = 200;
+                        response.ResponseMessage = "Product Data Edited Successfully !";
+                        return Ok(response);
+                    }
+                    else
+                    {
+                        response.ResponseCode = 400;
+                        response.ResponseMessage = "Bad Request !";
+                        return BadRequest(response);
+                    }
+                }
+                else
+                {
+                    return BadRequest(ModelState);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.ResponseCode = 400;
+                response.ResponseMessage = "Bad Request !";
+                return BadRequest(response);
+            }
+        }
     }
 }

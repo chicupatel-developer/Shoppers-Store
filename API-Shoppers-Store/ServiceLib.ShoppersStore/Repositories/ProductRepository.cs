@@ -250,6 +250,27 @@ namespace ServiceLib.ShoppersStore.Repositories
                 }
             }
             return product;
+            // return null;
         }
+
+        public ProductDTO EditProduct(ProductDTO product)
+        {
+            var _product = appDbContext.Products.Where(x => x.ProductId == product.ProductId).FirstOrDefault();
+            if (_product != null)
+            {
+                _product.CategoryId = product.CategoryId;
+                _product.ProductName = product.ProductName;
+                _product.ProductDesc = product.ProductDesc;
+                _product.Price = product.Price;
+
+                appDbContext.SaveChanges();
+                return product;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
     }
 }
