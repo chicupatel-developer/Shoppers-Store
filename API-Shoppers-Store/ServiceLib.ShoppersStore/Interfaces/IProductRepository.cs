@@ -12,9 +12,9 @@ namespace ServiceLib.ShoppersStore.Interfaces
         Product AddProduct(Product product);        
         ProductFileAddResponse ProductFileAdd(AddProductFile addProductFile);        
         IEnumerable<ProductDTO> GetAllProducts();
-        IEnumerable<ProductDTO> SearchProducts(string searchValue, string categoryId);
-        /*
+        IEnumerable<ProductDTO> SearchProducts(string searchValue, string categoryId);        
         ProductDTO GetProduct(int productId);
+        /*
         ProductDTO EditProduct(ProductDTO product);
         ProductFileEditResponse ProductFileEdit(ProductFileEditResponse _productFile);                
         ProductDiscountDTO SetProductDiscount(ProductDiscountDTO discount);

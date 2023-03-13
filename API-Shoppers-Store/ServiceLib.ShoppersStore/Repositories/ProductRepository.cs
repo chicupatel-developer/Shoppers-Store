@@ -216,5 +216,40 @@ namespace ServiceLib.ShoppersStore.Repositories
             return products;
         }
 
+        public ProductDTO GetProduct(int productId)
+        {
+            ProductDTO product = new ProductDTO();
+
+            var _product = appDbContext.Products
+                                .Where(x => x.ProductId == productId).FirstOrDefault();
+            if (_product != null)
+            {
+                var _productFile = appDbContext.ProductFiles
+                                        .Where(x => x.ProductFileId == _product.ProductFileId).FirstOrDefault();
+
+                // product with image
+                if (_productFile != null)
+                {
+                    product.CategoryId = _product.CategoryId;
+                    product.Price = _product.Price;
+                    product.ProductDesc = _product.ProductDesc;
+                    product.ProductFileId = _product.ProductFileId;
+                    product.ProductId = _product.ProductId;
+                    product.ProductImage = _productFile.FileName;
+                    product.ProductName = _product.ProductName;
+                }
+                // product without image
+                else
+                {
+                    product.CategoryId = _product.CategoryId;
+                    product.Price = _product.Price;
+                    product.ProductDesc = _product.ProductDesc;
+                    product.ProductId = _product.ProductId;
+                    product.ProductImage = null;
+                    product.ProductName = _product.ProductName;
+                }
+            }
+            return product;
+        }
     }
 }

@@ -205,5 +205,31 @@ namespace API.SS.Controllers
         }
 
 
+        [Authorize(Roles = "Admin,Manager")]
+        [HttpGet]
+        [Route("getProduct/{selectedProductId}")]
+        public IActionResult GetProduct(int selectedProductId)
+        {
+            try
+            {
+                // throw new Exception();
+
+                var product = _productRepo.GetProduct(selectedProductId);
+
+                if (product == null || product.ProductId==0)
+                {
+                    return BadRequest("Product Not Found !");
+                }             
+                else
+                {
+                    return Ok(product);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { ResponseCode = 500, ResponseMessage = "Server Error!" });
+            }
+        }
+
     }
 }
