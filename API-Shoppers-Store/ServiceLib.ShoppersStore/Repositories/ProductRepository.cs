@@ -330,5 +330,71 @@ namespace ServiceLib.ShoppersStore.Repositories
             }
             return _productFile;
         }
+
+
+        public ProductDiscountDTO SetProductDiscount(ProductDiscountDTO discount)
+        {
+            discount.APIResponse = new APIResponse();
+
+            var _product = appDbContext.Products
+                                .Where(x => x.ProductId == discount.ProductId).FirstOrDefault();
+            if (_product != null)
+            {
+                // update @ Products
+                _product.DiscountPercentage = discount.DiscountPercentage;
+                _product.DiscountPrice = _product.Price - ((_product.Price * discount.DiscountPercentage) / 100);
+
+                // insert @ DiscountHistories
+                // check if never discount has been set for this product
+                var discountSetFound = appDbContext.DiscountHistories
+                                .Where(x => x.ProductId == discount.ProductId).FirstOrDefault();
+                if (discountSetFound != null)
+                {
+                    // ever discount has been set for this product
+                    // find the last record
+                    var lastDiscountSet = appDbContext.DiscountHistories
+                                            .Where(x => x.ProductId == discount.ProductId)
+                                            .OrderBy(x => x.DiscountHistoryId);
+                    if (lastDiscountSet != null && lastDiscountSet.Count() > 0)
+                    {
+                        // update DiscountEffectiveEnd 
+                        lastDiscountSet.LastOrDefault().DiscountEffectiveEnd = DateTime.Now.AddDays(-1);
+                    }
+                    // insert @ DiscountHistories
+                    appDbContext.DiscountHistories.Add(new DiscountHistory()
+                    {
+                        DiscountEffectiveBegin = DateTime.Now,
+                        DiscountPercentage = discount.DiscountPercentage,
+                        ProductId = discount.ProductId,
+                        DiscountEffectiveEnd = null
+                    });
+                }
+                else
+                {
+                    // never discount has been set for this product
+                    // insert @ DiscountHistories
+                    appDbContext.DiscountHistories.Add(new DiscountHistory()
+                    {
+                        DiscountEffectiveBegin = DateTime.Now,
+                        DiscountPercentage = discount.DiscountPercentage,
+                        ProductId = discount.ProductId
+                    });
+                }
+
+                appDbContext.SaveChanges();
+
+                discount.APIResponse.ResponseCode = 0;
+                discount.APIResponse.ResponseMessage = "Discount Applied Successfully !";
+                discount.DiscountPrice = _product.DiscountPrice;
+                discount.Price = _product.Price;
+            }
+            else
+            {
+                discount.APIResponse.ResponseCode = -1;
+                discount.APIResponse.ResponseMessage = "Product Not Found !";
+            }
+            return discount;
+        }
+
     }
 }

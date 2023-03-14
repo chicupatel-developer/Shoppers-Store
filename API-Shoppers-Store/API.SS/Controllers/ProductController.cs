@@ -345,5 +345,37 @@ namespace API.SS.Controllers
         }
 
 
+        // apply discount
+        [Authorize("Manager")]
+        [HttpPost]
+        [Route("setProductDiscount")]
+        public IActionResult SetProductDiscount(ProductDiscountDTO discount)
+        {
+            try
+            {
+                // throw new Exception();
+
+                if (ModelState.IsValid)
+                {
+                    discount = _productRepo.SetProductDiscount(discount);
+                    return Ok(discount);
+                }
+                else
+                {
+                    return BadRequest(ModelState);
+                    /*
+                    return BadRequest(ModelState.ToDictionary(
+                         kvp => kvp.Key,
+                         kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                       ));
+                    */
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Server Error !");
+            }
+        }
+
     }
 }

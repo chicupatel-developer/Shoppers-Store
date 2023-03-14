@@ -15,9 +15,7 @@ namespace ServiceLib.ShoppersStore.Interfaces
         IEnumerable<ProductDTO> SearchProducts(string searchValue, string categoryId);        
         ProductDTO GetProduct(int productId);        
         ProductDTO EditProduct(ProductDTO product);        
-        ProductFileEditResponse ProductFileEdit(ProductFileEditResponse _productFile);
-        /*
-        ProductDiscountDTO SetProductDiscount(ProductDiscountDTO discount);
-        */
+        ProductFileEditResponse ProductFileEdit(ProductFileEditResponse _productFile);        
+        ProductDiscountDTO SetProductDiscount(ProductDiscountDTO discount);       
     }
 }
