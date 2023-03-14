@@ -272,5 +272,63 @@ namespace ServiceLib.ShoppersStore.Repositories
             }
         }
 
+        public ProductFileEditResponse ProductFileEdit(ProductFileEditResponse _productFile)
+        {
+            if (_productFile.ProductFileId > 0)
+            {
+                // edit
+                // existing product image
+                var productFile = appDbContext.ProductFiles.Where(x => x.ProductFileId == _productFile.ProductFileId).FirstOrDefault();
+                if (productFile != null)
+                {
+                    productFile.FileName = _productFile.ProductImage;
+                    productFile.FilePath = _productFile.ProductImagePath;
+                    appDbContext.SaveChanges();
+
+                    _productFile.ResponseCode = 0;
+                    _productFile.ResponseMessage = "Image-EDIT : Success !";
+                }
+            }
+            // existing product NO image
+            else
+            {
+                // This product has NO Image and
+                // User is uploading new Image for this product
+                using var transaction = appDbContext.Database.BeginTransaction();
+
+                try
+                {
+                    // 1) add @ ProductFiles                          
+                    var productFileSaved = appDbContext.ProductFiles.Add(new ProductFile()
+                    {
+                        FileName = _productFile.ProductImage,
+                        FilePath = _productFile.ProductImagePath
+                    });
+                    appDbContext.SaveChanges();
+
+                    // check for transaction rollback
+                    // throw new Exception();
+
+                    // 2) update @ Products
+                    var product_ = appDbContext.Products
+                                    .Where(x => x.ProductId == _productFile.ProductId).FirstOrDefault();
+                    product_.ProductFileId = productFileSaved.Entity.ProductFileId;
+                    appDbContext.SaveChanges();
+
+                    _productFile.ResponseCode = 0;
+                    _productFile.ResponseMessage = "Image-EDIT : Success !";
+
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+
+                    _productFile.ResponseCode = -1;
+                    _productFile.ResponseMessage = "Image-EDIT : Fail !";
+                }
+            }
+            return _productFile;
+        }
     }
 }

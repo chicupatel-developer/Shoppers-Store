@@ -272,5 +272,78 @@ namespace API.SS.Controllers
                 return BadRequest(response);
             }
         }
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [RequestSizeLimit(40000000)]
+        [Route("editProductFileUpload")]
+        public IActionResult EditProductFileUpload(IFormCollection data)
+        {         
+            try
+            {
+                ProductFileEditResponse response = new ProductFileEditResponse();
+                int ProductFileId = 0;
+                int ProductId = 0;
+
+                // throw new Exception();    
+                
+                var files = data.Files;
+
+                if (data.TryGetValue("productFileId", out var _productFileId))
+                {
+                    ProductFileId = Int32.Parse(_productFileId);
+                }
+                if (data.TryGetValue("productId", out var _productId))
+                {
+                    ProductId = Int32.Parse(_productId);
+                }
+
+                var postedFile = files[0];
+                var uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "Files");
+
+                // check for 400
+                // if (!(postedFile.Length > 0))
+                if (postedFile.Length > 0)
+                {
+                    var fileName = DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" + postedFile.FileName;
+                    var finalPath = Path.Combine(uploadFolder, fileName);
+                    using (var fileStream = new FileStream(finalPath, FileMode.Create))
+                    {
+                        postedFile.CopyTo(fileStream);
+                    }
+                    // return Ok($"File is uploaded Successfully");
+
+
+                    // product file info
+                    ProductFile productFile = new ProductFile()
+                    {
+                        FilePath = finalPath,
+                        FileName = fileName
+                    };
+
+                    // product file info edit/add to db
+                    ProductFileEditResponse _productFile = new ProductFileEditResponse()
+                    {
+                        ProductId = ProductId,
+                        ProductFileId = ProductFileId,
+                        ProductImage = productFile.FileName,
+                        ProductImagePath = productFile.FilePath
+                    };
+                    response = _productRepo.ProductFileEdit(_productFile);
+                    return Ok(response);
+                }
+                else
+                {
+                    return BadRequest("The File is not received !");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Server Error !");
+            }
+        }
+
+
     }
 }
