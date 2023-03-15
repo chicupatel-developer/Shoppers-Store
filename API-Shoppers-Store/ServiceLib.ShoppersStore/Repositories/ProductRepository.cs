@@ -237,6 +237,8 @@ namespace ServiceLib.ShoppersStore.Repositories
                     product.ProductId = _product.ProductId;
                     product.ProductImage = _productFile.FileName;
                     product.ProductName = _product.ProductName;
+                    product.CurrentPrice = _product.DiscountPrice;
+                    product.CurrentDiscountPercentage = _product.DiscountPercentage;
                 }
                 // product without image
                 else
@@ -247,6 +249,8 @@ namespace ServiceLib.ShoppersStore.Repositories
                     product.ProductId = _product.ProductId;
                     product.ProductImage = null;
                     product.ProductName = _product.ProductName;
+                    product.CurrentPrice = _product.DiscountPrice;
+                    product.CurrentDiscountPercentage = _product.DiscountPercentage;
                 }
             }
             return product;
@@ -358,7 +362,8 @@ namespace ServiceLib.ShoppersStore.Repositories
                     if (lastDiscountSet != null && lastDiscountSet.Count() > 0)
                     {
                         // update DiscountEffectiveEnd 
-                        lastDiscountSet.LastOrDefault().DiscountEffectiveEnd = DateTime.Now.AddDays(-1);
+                        // lastDiscountSet.LastOrDefault().DiscountEffectiveEnd = DateTime.Now.AddDays(-1);
+                        lastDiscountSet.LastOrDefault().DiscountEffectiveEnd = DateTime.Now.AddDays(0);
                     }
                     // insert @ DiscountHistories
                     appDbContext.DiscountHistories.Add(new DiscountHistory()
