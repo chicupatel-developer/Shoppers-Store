@@ -377,5 +377,27 @@ namespace API.SS.Controllers
             }
         }
 
+
+        // reset discount
+        [Authorize("Manager")]
+        [HttpGet]
+        [Route("resetProductDiscount/{selectedProductId}")]
+        public IActionResult ResetProductDiscount(int selectedProductId)
+        {
+            try
+            {
+
+                // throw new Exception();
+
+                if (_productRepo.ResetProductDiscount(selectedProductId))
+                    return Ok();
+                else
+                    return StatusCode(500, "Server Error !");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Server Error !");
+            }
+        }
     }
 }

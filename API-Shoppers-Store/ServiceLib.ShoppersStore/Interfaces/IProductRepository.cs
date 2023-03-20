@@ -16,6 +16,7 @@ namespace ServiceLib.ShoppersStore.Interfaces
         ProductDTO GetProduct(int productId);        
         ProductDTO EditProduct(ProductDTO product);        
         ProductFileEditResponse ProductFileEdit(ProductFileEditResponse _productFile);        
-        ProductDiscountDTO SetProductDiscount(ProductDiscountDTO discount);       
+        ProductDiscountDTO SetProductDiscount(ProductDiscountDTO discount);
+        bool ResetProductDiscount(int productId);
     }
 }

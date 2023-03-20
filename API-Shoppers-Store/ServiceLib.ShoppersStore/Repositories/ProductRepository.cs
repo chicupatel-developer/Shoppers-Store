@@ -401,5 +401,38 @@ namespace ServiceLib.ShoppersStore.Repositories
             return discount;
         }
 
+        public bool ResetProductDiscount(int productId)
+        {
+            var _product = appDbContext.Products
+                                .Where(x => x.ProductId == productId).FirstOrDefault();
+            if (_product != null)
+            {
+                // update @ Products
+                _product.DiscountPercentage = 0;
+                _product.DiscountPrice = 0;
+
+                // @ DiscountHistories
+                // check if never discount has been set for this product
+                var discountSetFound = appDbContext.DiscountHistories
+                                .Where(x => x.ProductId == productId).FirstOrDefault();
+                if (discountSetFound != null)
+                {
+                    // ever discount has been set for this product
+                    // find the last record
+                    var lastDiscountSet = appDbContext.DiscountHistories
+                                            .Where(x => x.ProductId == productId)
+                                            .OrderBy(x => x.DiscountHistoryId);
+                    if (lastDiscountSet != null && lastDiscountSet.Count() > 0)
+                    {
+                        // update DiscountEffectiveEnd                         
+                        lastDiscountSet.LastOrDefault().DiscountEffectiveEnd = DateTime.Now.AddDays(0);
+                    }
+                }
+                appDbContext.SaveChanges();
+                return true;
+            }
+            else
+                return false;           
+        }
     }
 }
