@@ -187,7 +187,7 @@ namespace API.SS.Controllers
         {
             try
             {              
-                if (searchValue == null && categoryId == null)
+                if (searchValue == null && (categoryId == null || Convert.ToInt32(categoryId)==0 ))
                 {
                     var allProducts = _productRepo.GetAllProducts();
                     return Ok(allProducts);
