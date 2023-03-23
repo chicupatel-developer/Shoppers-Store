@@ -4,14 +4,16 @@ using EF.Core.ShoppersStore.ShoppersStoreDB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EF.Core.ShoppersStore.ShoppersStoreDBMigrations
 {
     [DbContext(typeof(ShoppersStoreContext))]
-    partial class ShoppersStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20230323184745_product-productsell")]
+    partial class productproductsell
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,7 +74,6 @@ namespace EF.Core.ShoppersStore.ShoppersStoreDBMigrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("BillRefCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CardCVV")
@@ -179,7 +180,6 @@ namespace EF.Core.ShoppersStore.ShoppersStoreDBMigrations
                         .HasColumnType("int");
 
                     b.Property<string>("BillRefCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("CurrentPrice")
@@ -188,15 +188,10 @@ namespace EF.Core.ShoppersStore.ShoppersStoreDBMigrations
                     b.Property<int>("DiscountPercentage")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PaymentId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.HasKey("SellId");
-
-                    b.HasIndex("PaymentId");
 
                     b.HasIndex("ProductId");
 
@@ -232,10 +227,6 @@ namespace EF.Core.ShoppersStore.ShoppersStoreDBMigrations
 
             modelBuilder.Entity("EF.Core.ShoppersStore.ShoppersStoreDB.Models.ProductSell", b =>
                 {
-                    b.HasOne("EF.Core.ShoppersStore.ShoppersStoreDB.Models.Payment", "Payment")
-                        .WithMany("ProductSells")
-                        .HasForeignKey("PaymentId");
-
                     b.HasOne("EF.Core.ShoppersStore.ShoppersStoreDB.Models.Product", "Product")
                         .WithMany("ProductSells")
                         .HasForeignKey("ProductId")

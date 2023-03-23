@@ -22,11 +22,12 @@ namespace EF.Core.ShoppersStore.ShoppersStoreDB.Models
         public decimal CurrentPrice { get; set; }
 
         public int BillQty { get; set; }
-
-
-        [JsonIgnore]
+        
         public Product Product { get; set; }
 
+        [Required]
         public string BillRefCode { get; set; }
+
+        public Payment Payment { get; set; }
     }
 }

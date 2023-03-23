@@ -20,7 +20,12 @@ namespace EF.Core.ShoppersStore.ShoppersStoreDB.Models
         public string CardType { get; set; }
         public int ValidMonth { get; set; }
         public int ValidYear { get; set; }
+        
+        [Required]
         public string BillRefCode { get; set; }
+        
         public DateTime TransactionDate { get; set; }
+
+        public ICollection<ProductSell> ProductSells { get; set; }
     }
 }

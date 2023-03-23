@@ -25,6 +25,14 @@ namespace EF.Core.ShoppersStore.ShoppersStoreDB
                   .HasMany(c => c.DiscountHistories)
                   .WithOne(e => e.Product);
 
+            modelBuilder.Entity<Product>()
+                .HasMany(c => c.ProductSells)
+                .WithOne(e => e.Product);
+
+            modelBuilder.Entity<Payment>()
+               .HasMany(c => c.ProductSells)
+               .WithOne(e => e.Payment);
+
         }
 
         public DbSet<Category> Categories { get; set; }
