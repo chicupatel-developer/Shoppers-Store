@@ -151,7 +151,13 @@ namespace EF.Core.ShoppersStore.ShoppersStoreDBMigrations
                     b.Property<string>("FilePath")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
                     b.HasKey("ProductFileId");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
 
                     b.ToTable("ProductFiles");
                 });
@@ -193,6 +199,15 @@ namespace EF.Core.ShoppersStore.ShoppersStoreDBMigrations
                     b.HasOne("EF.Core.ShoppersStore.ShoppersStoreDB.Models.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EF.Core.ShoppersStore.ShoppersStoreDB.Models.ProductFile", b =>
+                {
+                    b.HasOne("EF.Core.ShoppersStore.ShoppersStoreDB.Models.Product", "Product")
+                        .WithOne("ProductFile")
+                        .HasForeignKey("EF.Core.ShoppersStore.ShoppersStoreDB.Models.ProductFile", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

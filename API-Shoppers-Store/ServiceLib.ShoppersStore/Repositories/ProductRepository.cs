@@ -52,7 +52,7 @@ namespace ServiceLib.ShoppersStore.Repositories
                 // 1)
                 ProductFile productFile = new ProductFile()
                 {
-                    ProductFileId = addProductFile.ProductFileId,
+                    ProductId = addProductFile.ProductId,
                     FileName = addProductFile.FileName,
                     FilePath = addProductFile.FilePath
                 };
@@ -306,7 +306,8 @@ namespace ServiceLib.ShoppersStore.Repositories
                     var productFileSaved = appDbContext.ProductFiles.Add(new ProductFile()
                     {
                         FileName = _productFile.ProductImage,
-                        FilePath = _productFile.ProductImagePath
+                        FilePath = _productFile.ProductImagePath,
+                        ProductId = _productFile.ProductId,
                     });
                     appDbContext.SaveChanges();
 
