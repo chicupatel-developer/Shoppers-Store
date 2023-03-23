@@ -10,7 +10,7 @@ Technology
 
 - Sql Server
 
-- React 18, Html, CSS, Javascript, Bootstrap 5
+- React 18, Html, CSS, Javascript, Bootstrap 5, Google chart api
 
 
 # System Diagram
