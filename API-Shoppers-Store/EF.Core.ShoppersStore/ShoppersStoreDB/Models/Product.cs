@@ -39,5 +39,7 @@ namespace EF.Core.ShoppersStore.ShoppersStoreDB.Models
 
         public ProductFile ProductFile { get; set; }
 
+        public ICollection<DiscountHistory> DiscountHistories { get; set; }
+
     }
 }

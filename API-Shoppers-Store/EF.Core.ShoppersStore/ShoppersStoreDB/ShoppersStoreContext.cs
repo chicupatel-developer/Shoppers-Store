@@ -20,6 +20,11 @@ namespace EF.Core.ShoppersStore.ShoppersStoreDB
                 .HasOne(a => a.ProductFile)
                 .WithOne(b => b.Product)
                 .HasForeignKey<ProductFile>(b => b.ProductId);
+
+            modelBuilder.Entity<Product>()
+                  .HasMany(c => c.DiscountHistories)
+                  .WithOne(e => e.Product);
+
         }
 
         public DbSet<Category> Categories { get; set; }

@@ -336,7 +336,6 @@ namespace ServiceLib.ShoppersStore.Repositories
             return _productFile;
         }
 
-
         public ProductDiscountDTO SetProductDiscount(ProductDiscountDTO discount)
         {
             discount.APIResponse = new APIResponse();
