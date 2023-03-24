@@ -27,7 +27,9 @@ namespace EF.Core.ShoppersStore.ShoppersStoreDB.Models
 
         [Required]
         public string BillRefCode { get; set; }
-
+        
+        [Required]
+        public int PaymentId { get; set; }
         public Payment Payment { get; set; }
     }
 }

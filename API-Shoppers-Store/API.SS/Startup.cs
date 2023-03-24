@@ -44,6 +44,7 @@ namespace API.SS
 
             #region Repositories
             services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IProductSellRepository, ProductSellRepository>();
             #endregion
 
             #region shoppers-store db context
