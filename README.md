@@ -1,4 +1,4 @@
-# Shoppers-Store
+# Shoppers-Store  [WIP]
 
 Technology
 ----------
